@@ -1,0 +1,11 @@
+[db]
+location = 'motherduck'
+name = 'autostyl'
+[pinterest.labels]
+location = 'labels.json'
+prefer = ['colour', 'recent']
+amount = 10 
+[instagram.labels]
+location = 'labels.json'
+prefer = ['colour', 'recent']
+amount = 10

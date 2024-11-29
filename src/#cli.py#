@@ -1,0 +1,48 @@
+import typer
+import src.config as conf
+import src.scraper as scraper
+import gcloud as gcl
+app = typer.Typer()
+
+
+@app.command()
+def pinterest(
+    search: str,
+    amount: int = 10,
+    quality: str = "orig",
+    bookmarks: str = "",
+    download: bool = False,
+):
+
+    configs = conf.PinterestConfig(
+        search_keywords=search,  # Search word
+        file_lengths=amount,  # total number of images to download (default = "100")
+        image_quality=quality,  # image quality (default = "orig")
+        bookmarks="",
+    )  # next page data (default= "")
+    images, urls = scraper.PinterestScraper(
+        configs
+    ).return_images()  # download images directly
+    if download:
+        scraper.PinterestScraper(configs).download_images()
+    for image, url in zip(images, urls):
+        typer.echo(url)  # just bring image links
+
+@app.command()
+def create_dataset(images, bucket, db, image_metadata, filter_lambda):
+    """This function creates an imagees dataset and uploads it to gcloud, and motherduck or another database for further processing"""
+    data_interleaver=((image, meta) for image, meta in zip(images, image_metadata) if filter_lambda(image, meta))
+    with typer.progressbar as pr:
+        
+@app.command()
+def roma(amount: int = 1, config: str = "config.toml"):
+    path = "https://images.romamoulding.com/cdn-cgi/image/quality=85,width=2048,f=auto,fit=cover/https://cdn.romamoulding.com/mouldings"
+    constr = connection_string_from_config(config)
+    # register gcloud functions with duckdb so that I can query them
+    # store image links in the database
+    # use CLIP or Mobile clip to generate image embeddings, add them to the database, then combine them with the other models made by openai we can experiment to see if open 
+    with duckdb.connect(constr) as conn:
+        query = f"""SELECT gvision( || ProductDescription ) FROM Parts WHERE PartNum NOT LIKE 'M-%' LIMIT {amount}""" # where are not going to be using matts here.
+        duckdb.create_function("gvision", gcloud.vision.explain)
+        I should save the path of each image in the database and just 
+        
